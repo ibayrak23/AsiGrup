@@ -51,7 +51,7 @@ $result = $conn->query($sql);
                 <th>Banka Adı</th>
             </tr>
             </tfoot>
-            <?php        if ($result->num_rows > 0) {
+            <?php  if ($result->num_rows > 0) {
                 // output data of each row
                 while($row = $result->fetch_assoc()) {
                     ?>

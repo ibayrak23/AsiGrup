@@ -20,8 +20,18 @@ $result = $conn->query($sql);
 if (isset($_GET['del']) && is_numeric($_GET['del']))
 {
     $del = $_GET['del'];
-    $sql_delete = "DELETE FROM kasa WHERE id = '$del'";
-    $result3 = $result->query($sql_delete) or die ("Error Querying Database 3");
+    $sql = "DELETE FROM kasa WHERE id=$del";
+    if ($conn->query($sql) == TRUE) {
+        echo "<script type='text/javascript'>alert('Kayıt Silindi...');</script>";
+        header("Location: kasa.php");
+
+    } else {
+        echo "Error deleting record: " . $conn->error;
+    }
+  //  $result3 = $result->query($sql_delete) or die ("Error Querying Database 3");
+}
+else if(isset($_GET['upd']) && is_numeric($_GET['upd'])){
+    header("Location: deneme.php");
 }
 ?>
 
@@ -37,6 +47,9 @@ if (isset($_GET['del']) && is_numeric($_GET['del']))
                     <th>Giden Para</th>
                     <th>Gelen Para Tarihi</th>
                     <th>Giden Para Tarihi</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </thead>
 
@@ -48,6 +61,9 @@ if (isset($_GET['del']) && is_numeric($_GET['del']))
                     <th>Giden Para</th>
                     <th>Gelen Para Tarihi</th>
                     <th>Giden Para Tarihi</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </tfoot>
         <?php        if ($result->num_rows > 0) {
@@ -57,19 +73,22 @@ if (isset($_GET['del']) && is_numeric($_GET['del']))
                     <tbody>
                     <tr role="row" class="odd">
                         <td><?php echo $row["id"]. "<br>"; ?></td>
-                        <td><?php echo $row["gelenpara"]-$row["gidenpara"].  "<br>"; ?></td>
+                        <td><?php echo $row["toppara"]. "<br>"; ?></td>
                         <td><?php echo $row["gelenpara"]. "<br>"; ?></td>
                         <td><?php echo $row["gidenpara"]. "<br>"; ?></td>
                         <td><?php echo $row["geltarih"]. "<br>"; ?></td>
                         <td><?php echo $row["gittarih"]. "<br>"; ?></td>
-                        <td><span class="label label-success">Active</span></td>
                         <td>
-                            <button type="button" name="update" id=<?= $row['id']; ?> class="btn btn-warning btn-xs update">Güncelle
-                            </button>
+                            <a href="../kasa.php?id=<?= $row['id']; ?>" class='btn btn-info btn-group-sm update'> İncele </a>
                         </td>
                         <td>
-                            <a href="?del=<?= $row['id']; ?>" class='btn btn-danger'> Delete </a>
+                            <a href="deneme.php?id=<?= $row['id']; ?>" class='btn btn-warning btn-group-sm update'> Güncelle </a>
                         </td>
+
+                        <td>
+                            <a href="?del=<?= $row['id']; ?>" class='btn btn-group-sm btn-danger'>Sil</a>
+                        </td>
+
                     </tr>
 
                     </tbody>

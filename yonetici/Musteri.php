@@ -1,4 +1,5 @@
-<?php include ("navbar.php"); include ("baglanti.php");
+<?php include ("navbar.php");
+include ("baglanti.php");
 ?>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -17,6 +18,10 @@
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 </head>
+<?php
+$sql = "SELECT borc_id FROM borclar";
+$result = $conn->query($sql);
+?>
 <body>
 <div class="container">
     <div class="page-header">
@@ -77,6 +82,21 @@
                                     <input id="debt" name="debt" type="text" placeholder="Kalan Miktar" class="form-control">
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
+                                <div class="col-md-8">
+                                    <select class="form-control">
+                                        <?php        if ($result->num_rows > 0) {
+                                        // output data of each row
+                                        while($row = $result->fetch_assoc()) {
+                                        ?>
+                                        <option value="<?php echo $row["borc_id"]; ?>"> <?php echo $row["borc_id"]; ?></option>
+                                        <?php  }}?>
+                                    </select>
+                                </div>
+                            </div>
+
 
                             <div class="form-group">
                                 <div class="col-md-12 text-center">

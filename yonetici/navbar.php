@@ -33,7 +33,7 @@
     <li><a href="Proje.php">Proje</a></li>
     <li><a href="BagimsizBolum.php">Bağımsız Bölüm</a></li>
     <li><a href="Musteri.php">Müşteri</a></li>
-    <li><a href="index.php">index</a></li>
+    <li><a href="deneme.php">deneme</a></li>
     <li><a href="../kasa.php">Kullanıcı Sayfası</a></li>
 
 </ul>
