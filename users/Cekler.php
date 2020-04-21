@@ -1,5 +1,15 @@
 <?php include("navbar.php");
-include("baglanti.php"); ?>
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "asideneme";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} ?>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -20,7 +30,7 @@ include("baglanti.php"); ?>
     </script>
 </head>
 <?php
-$sql = "SELECT id, cekNo, odemeTarihi, verildigiTarih, kimeVerildigi,kimdenGeldigi,banka FROM cekler";
+$sql = "SELECT id, cekNo, odemeGunu, verilisTarihi,kaynak,hedef, durum,hareket,banka FROM cekler";
 $result = $conn->query($sql);
 ?>
 
@@ -33,9 +43,10 @@ $result = $conn->query($sql);
                 <th>id</th>
                 <th>Çek No</th>
                 <th>Ödeme Tarihi</th>
-                <th>Verildiği Tarih</th>
                 <th>Kime Verildiği</th>
+                <th>Verildiği Tarih</th>
                 <th>Kimden Geldiği</th>
+                <th>durum</th>
                 <th>Banka Adı</th>
             </tr>
             </thead>
@@ -44,10 +55,11 @@ $result = $conn->query($sql);
             <tr>
                 <th>id</th>
                 <th>Çek No</th>
+                <th>Kime Verildiği</th>
                 <th>Ödeme Tarihi</th>
                 <th>Verildiği Tarih</th>
-                <th>Kime Verildiği</th>
                 <th>Kimden Geldiği</th>
+                <th>durum</th>
                 <th>Banka Adı</th>
             </tr>
             </tfoot>
@@ -59,10 +71,11 @@ $result = $conn->query($sql);
                     <tr>
                         <td><?php echo $row["id"]. "<br>"; ?></td>
                         <td><?php echo $row["cekNo"].  "<br>"; ?></td>
-                        <td><?php echo $row["odemeTarihi"]. "<br>"; ?></td>
-                        <td><?php echo $row["verildigiTarih"]. "<br>"; ?></td>
-                        <td><?php echo $row["kimeVerildigi"]. "<br>"; ?></td>
-                        <td><?php echo $row["kimdenGeldigi"]. "<br>"; ?></td>
+                        <td><?php echo $row["odemeGunu"]. "<br>"; ?></td>
+                        <td><?php echo $row["verilisTarihi"]. "<br>"; ?></td>
+                        <td><?php echo $row["kaynak"]. "<br>"; ?></td>
+                        <td><?php echo $row["hedef"]. "<br>"; ?></td>
+                        <td><?php if($row["durum"]){echo "Ödendi"; } else{echo "Ödenmedi";}  "<br>"; ?></td>
                         <td><?php echo $row["banka"]. "<br>"; ?></td>
                     </tr>
 

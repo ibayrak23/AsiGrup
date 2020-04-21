@@ -1,4 +1,16 @@
-<?php include ("navbar.php"); include ("baglanti.php");
+<?php include ("navbar.php");
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "asideneme";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Veritabanına Bağlanılamadı: " . $conn->connect_error);
+}
+
 ?>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -17,6 +29,12 @@
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 </head>
+<?php
+$sql = "SELECT adiSoyadi FROM banka";
+$result = $conn->query($sql);
+$sql1 = "SELECT adiSoyadi FROM musteri";
+$result1 = $conn->query($sql1);
+?>
 <body>
 <div class="container">
     <div class="page-header">
@@ -32,33 +50,60 @@
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
                                 <div class="col-md-8">
+                                    <input id="cardID" name="cardID" type="number" placeholder="Kart ID" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="owner"  name="owner">
+                                        <?php        if ($result1->num_rows > 0) {
+                                            // output data of each row
+                                            while($row1 = $result1->fetch_assoc()) {
+                                                ?>
+                                                <option value="<?php echo $row1["adiSoyadi"]; ?>" > <?php echo $row1["adiSoyadi"]; ?></option>
+                                            <?php  }}?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
+                                <div class="col-md-8">
                                     <input id="cardName" name="cardName" type="text" placeholder="Kart Adı" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="bankName" name="bankName" type="text" placeholder="Ait Olduğu Banka" class="form-control">
+                                    <input id="iban" name="iban" type="text" placeholder="IBAN" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="bankName"  name="bankName">
+                                        <?php        if ($result->num_rows > 0) {
+                                            // output data of each row
+                                            while($row = $result->fetch_assoc()) {
+                                                ?>
+                                                <option value="<?php echo $row["adiSoyadi"]; ?>" > <?php echo $row["adiSoyadi"]; ?></option>
+                                            <?php  }}?>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-envelope-o bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="limit" name="limit" type="text" placeholder="Kart Limiti" class="form-control">
+                                    <input id="limit" name="limit" type="number" placeholder="Kart Limiti" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="date" name="date" type="date" placeholder="Hesap Kesim Tarihi" class="form-control">
+                                    <input id="kmh" name="kmh" type="text" placeholder="KMH" class="form-control">
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
-                                <div class="col-md-8">
-                                    <input id="lastDate" name="lastDate" type="date" placeholder="Son Ödeme Tarihi" class="form-control">
-                                </div>
-                            </div>
+
                             <div class="form-group">
                                 <div class="col-md-12 text-center">
                                     <button type="submit" name="button" class="btn btn-primary btn-lg">Kaydet</button>
@@ -72,26 +117,32 @@
     </div>
 
     <?php
+    $cardID= isset($_POST['cardID']) ? $_POST['cardID'] : '';
+    $owner= isset($_POST['owner']) ? $_POST['owner'] : '';
     $cardName= isset($_POST['cardName']) ? $_POST['cardName'] : '';
-    $bankName= isset($_POST['bankName']) ? $_POST['bankName'] : '';
-    $limit= isset($_POST['limit']) ? $_POST['limit'] : '';
-    $date= isset( $_POST['date']) ?  $_POST['date'] : '';
-    $lastDate= isset( $_POST['lastDate']) ?  $_POST['lastDate'] : '';
+    $iban= isset( $_POST['iban']) ?  $_POST['iban'] : '';
+    $bankName= isset( $_POST['bankName']) ?  $_POST['bankName'] : '';
+    $limit= isset( $_POST['limit']) ?  $_POST['limit'] : '';
+    $kmh= isset( $_POST['kmh']) ?  $_POST['kmh'] : '';
+
 
 if (isset($_POST['button'])){
-    if(empty($_POST['cardName'])){
+    if(empty($_POST['cardID'])){
+        echo "<script type='text/javascript'>alert('Kart ID Yazınız...');</script>";
+    }elseif(empty($_POST['owner'])){
+        echo "<script type='text/javascript'>alert('Kart Sahibini Yazınız...');</script>";
+    }elseif(empty($_POST['cardName'])){
         echo "<script type='text/javascript'>alert('Kart Adını Yazınız...');</script>";
-    }elseif(empty($_POST['bankName'])){
-        echo "<script type='text/javascript'>alert('Banka Adını Yazınız...');</script>";
+    }elseif(empty($_POST['iban'])){
+        echo "<script type='text/javascript'>alert('IBAN No Yazınız...');</script>";
     }elseif(empty($_POST['limit'])){
-        echo "<script type='text/javascript'>alert('Kart Limitini Yazınız...');</script>";
-    }elseif(empty($_POST['date'])){
-        echo "<script type='text/javascript'>alert('Hesap Kesim Tarihini Yazınız...');</script>";
-    }elseif(empty($_POST['lastDate'])){
-        echo "<script type='text/javascript'>alert('Son Ödeme Tarihini Yazınız...');</script>";
-    }else{
-        $sql = "INSERT INTO kredikartlari (kartAdi,banka,kartLimit,kesimTarihi,sonOdeme)
-        VALUES ('$cardName','$bankName','$limit','$date','$lastDate')";
+        echo "<script type='text/javascript'>alert('Bakiye Yazınız...');</script>";
+    }elseif(empty($_POST['kmh'])){
+        echo "<script type='text/javascript'>alert('KMH Değerini Yazınız...');</script>";
+    }
+    else{
+        $sql = "INSERT INTO kredikarti (kartID,kaynak,kartAdi,IBAN,bakiye,KMH,banka)
+        VALUES ('$cardID','$owner','$cardName','$iban','$limit','$kmh','$bankName')";
     }
     if (mysqli_query($conn, $sql)) {
         echo "<script type='text/javascript'>alert('Kayıt Başarılı...');</script>";

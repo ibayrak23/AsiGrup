@@ -1,4 +1,15 @@
-<?php include ("navbar.php"); include ("baglanti.php");
+<?php include ("navbar.php");
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "asideneme";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Veritabanına Bağlanılamadı: " . $conn->connect_error);
+}
 ?>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -17,6 +28,11 @@
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 </head>
+<?php
+$sql = "SELECT adiSoyadi FROM banka";
+$result = $conn->query($sql);
+?>
+
 <body>
 <div class="container">
     <div class="page-header">
@@ -32,13 +48,13 @@
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="credit" name="credit" type="text"  placeholder="Kredi Miktarı" class="form-control">
+                                    <input id="credit" name="credit" type="number"  placeholder="Kredi Miktarı" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="rentCount" name="rentCount" type="text" maxlength="3" placeholder="Taksit Sayısı" class="form-control">
+                                    <input id="rentCount" name="rentCount" type="number" maxlength="3" placeholder="Taksit Sayısı" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -47,37 +63,25 @@
                                     <input id="payDate" name="payDate" type="date" placeholder="Ödeme Günü" class="form-control">
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-envelope-o bigicon"></i></span>
-                                <div class="col-md-8">
-                                    <input id="rentCost" name="rentCost" type="text" placeholder="Taksit Tutarı" class="form-control">
-                                </div>
-                            </div>
+
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="bankName" name="bankName" type="text" placeholder="Banka Adı" class="form-control">
+                                    <select class="form-control" name="bankName">
+                                        <?php    if ($result->num_rows > 0) {
+                                            // output data of each row
+                                            while($row = $result->fetch_assoc()) {
+                                                ?>
+                                                <option value="<?php echo $row["adiSoyadi"]; ?>">  <?php echo $row["adiSoyadi"]; ?></option>
+                                            <?php  }}?>
+                                    </select>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="topFaiz" name="topFaiz" type="text" placeholder="Toplam Ödenecek Faiz" class="form-control">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
-                                <div class="col-md-8">
-                                    <input id="topPay" name="topPay" type="text" placeholder="Toplam Ödeme" class="form-control">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
-                                <div class="col-md-8">
-                                    <input id="state" name="state" type="text" maxlength="1" placeholder="Ödendi - Ödenmedi" class="form-control">
+                                    <input id="topFaiz" name="topFaiz" type="number" placeholder="Toplam Ödenecek Faiz" class="form-control">
                                 </div>
                             </div>
 
@@ -97,12 +101,16 @@
     $credit= isset($_POST['credit']) ? $_POST['credit'] : '';
     $rentCount= isset($_POST['rentCount']) ? $_POST['rentCount'] : '';
     $payDate= isset($_POST['payDate']) ? $_POST['payDate'] : '';
-    $rentCost= isset( $_POST['rentCost']) ?  $_POST['rentCost'] : '';
     $bankName= isset( $_POST['bankName']) ?  $_POST['bankName'] : '';
     $topFaiz= isset( $_POST['topFaiz']) ?  $_POST['topFaiz'] : '';
-    $topPay= isset( $_POST['topPay']) ?  $_POST['topPay'] : '';
-    $state= isset( $_POST['state']) ?  $_POST['state'] : '';
-
+  //  $topPay= isset( $_POST['topPay']) ?  $_POST['topPay'] : '';
+    $durum= isset( $_POST['durum']) ?  $_POST['durum'] : '';
+    //    $topPay = $credit + $topFaiz;
+    $credit= (int)$credit;
+    $topFaiz= (int)$topFaiz;
+    $rentCount= (int)$rentCount;
+    $temp=$credit+$topFaiz;
+    $taksitTutari = ($temp)/$rentCount;
     if (isset($_POST['button'])){
         if(empty($_POST['credit'])){
             echo "<script type='text/javascript'>alert('Kredi Miktarını Yazınız...');</script>";
@@ -110,19 +118,13 @@
             echo "<script type='text/javascript'>alert('Taksit Sayısını Yazınız...');</script>";
         }elseif(empty($_POST['payDate'])){
             echo "<script type='text/javascript'>alert('Ödeme Gününü Yazınız...');</script>";
-        }elseif(empty($_POST['rentCost'])){
-            echo "<script type='text/javascript'>alert('Taksit Tutarını Yazınız...');</script>";
         }elseif(empty($_POST['bankName'])){
             echo "<script type='text/javascript'>alert('Banka Adını Yazınız...');</script>";
         }elseif(empty($_POST['topFaiz'])){
             echo "<script type='text/javascript'>alert('Toplam Ödenecek Faizi Yazınız...');</script>";
-        }elseif(empty($_POST['topPay'])){
-            echo "<script type='text/javascript'>alert('Toplam Ödemeyi Yazınız...');</script>";
-        }elseif(empty($_POST['state'])){
-            echo "<script type='text/javascript'>alert('Ödendi-Ödenmedi Bilgisini Yazınız...');</script>";
         }else{
-            $sql = "INSERT INTO krediler (krediMiktari,taksitSayisi,odemeGunu,taksitTutari,bankaAdi,toplamFaiz,toplamOdeme,durum)
-        VALUES ('$credit','$rentCount','$payDate','$rentCost','$bankName','$topFaiz','$topPay','$state')";
+            $sql = "INSERT INTO kredi (krediMiktari,taksitSayisi,odemeGunu,bankaAdi,taksitTutari,toplamFaiz,toplamOdeme)
+        VALUES ('$credit','$rentCount','$payDate','$bankName','$taksitTutari','$topFaiz','$temp')";
         }
         if (mysqli_query($conn, $sql)) {
             echo "<script type='text/javascript'>alert('Kayıt Başarılı...');</script>";

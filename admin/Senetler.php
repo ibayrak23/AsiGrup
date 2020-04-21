@@ -1,4 +1,15 @@
-<?php include ("navbar.php"); include ("baglanti.php");
+<?php include ("navbar.php");
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "asideneme";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Veritabanına Bağlanılamadı: " . $conn->connect_error);
+}
 ?>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -17,6 +28,13 @@
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 </head>
+<?php
+$sql1 = "SELECT adiSoyadi FROM banka";
+$result1 = $conn->query($sql1);
+$sql2 = "SELECT adiSoyadi FROM musteri";
+$result2 = $conn->query($sql2);
+$result3 = $conn->query($sql2);
+?>
 <body>
 <div class="container">
     <div class="page-header">
@@ -32,7 +50,13 @@
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="senNo" name="senNo" type="text" placeholder="Senet Numarasi" class="form-control">
+                                    <input id="senNo" name="senNo" type="number" placeholder="Senet Numarasi" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
+                                <div class="col-md-8">
+                                    <input id="miktar" name="miktar" type="number" placeholder="Senet Miktarı" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -48,21 +72,42 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-envelope-o bigicon"></i></span>
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="givenWho" name="givenWho" type="text" placeholder="Kime Verildi" class="form-control">
+                                    <select class="form-control" id="target"  name="target">
+                                        <?php        if ($result2->num_rows > 0) {
+                                            // output data of each row
+                                            while($row = $result2->fetch_assoc()) {
+                                                ?>
+                                                <option value="<?php echo $row["adiSoyadi"]; ?>" > <?php echo $row["adiSoyadi"]; ?></option>
+                                            <?php  }}?>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="takenWho" name="takenWho" type="text" placeholder="Kimden Geldi" class="form-control">
+                                    <select class="form-control" id="source"  name="source">
+                                        <?php        if ($result3->num_rows > 0) {
+                                            // output data of each row
+                                            while($row = $result3->fetch_assoc()) {
+                                                ?>
+                                                <option value="<?php echo $row["adiSoyadi"]; ?>" > <?php echo $row["adiSoyadi"]; ?></option>
+                                            <?php  }}?>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="bankName" name="bankName" type="text" placeholder="Banka Adı" class="form-control">
+                                    <select class="form-control" name="bankName">
+                                        <?php    if ($result1->num_rows > 0) {
+                                            // output data of each row
+                                            while($row = $result1->fetch_assoc()) {
+                                                ?>
+                                                <option value="<?php echo $row["adiSoyadi"]; ?>">  <?php echo $row["adiSoyadi"]; ?></option>
+                                            <?php  }}?>
+                                    </select>
                                 </div>
                             </div>
 
@@ -80,10 +125,11 @@
 
     <?php
     $senNo= isset($_POST['senNo']) ? $_POST['senNo'] : '';
+    $miktar= isset($_POST['miktar']) ? $_POST['miktar'] : '';
     $payDate= isset($_POST['payDate']) ? $_POST['payDate'] : '';
     $givenDate= isset($_POST['givenDate']) ? $_POST['givenDate'] : '';
-    $givenWho= isset( $_POST['givenWho']) ?  $_POST['givenWho'] : '';
-    $takenWho= isset( $_POST['takenWho']) ?  $_POST['takenWho'] : '';
+    $target= isset( $_POST['target']) ?  $_POST['target'] : '';
+    $source= isset( $_POST['source']) ?  $_POST['source'] : '';
     $bankName= isset( $_POST['bankName']) ?  $_POST['bankName'] : '';
 
     if (isset($_POST['button'])){
@@ -93,18 +139,20 @@
             echo "<script type='text/javascript'>alert('Ödeme Tarihini Yazınız...');</script>";
         }elseif(empty($_POST['givenDate'])){
             echo "<script type='text/javascript'>alert('Verildiği Tarihi Yazınız...');</script>";
-        }elseif(empty($_POST['givenWho'])){
+        }elseif(empty($_POST['source'])){
             echo "<script type='text/javascript'>alert('Kime Verildiğini Yazınız...');</script>";
-        }elseif(empty($_POST['takenWho'])){
+        }elseif(empty($_POST['target'])){
             echo "<script type='text/javascript'>alert('Kimden Geldiğini Yazınız...');</script>";
+        }elseif(empty($_POST['bankName'])){
+            echo "<script type='text/javascript'>alert('Bankayı Yazınız...');</script>";
         }else{
-            $sql = "INSERT INTO senetler (senetNo,OdemeTarihi,VerildigiTarih,KimeVerildi,KimdenGeldi)
-        VALUES ('$senNo','$payDate','$givenDate','$givenWho','$takenWho')";
+            $sql1 = "INSERT INTO senet (senetNo,miktar,odemeGunu,verilisTarihi,hedef,kaynak,banka)
+        VALUES ('$senNo','$miktar','$payDate','$givenDate','$target','$source','$bankName')";
         }
-        if (mysqli_query($conn, $sql)) {
+        if (mysqli_query($conn, $sql1)) {
             echo "<script type='text/javascript'>alert('Kayıt Başarılı...');</script>";
         } else {
-            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+            echo "Error: " . $sql1 . "<br>" . mysqli_error($conn);
         }}
     ?>
     <style> .header { color: #36A0FF;font-size: 27px;padding: 10px; }.bigicon { font-size: 35px; color: #36A0FF; } </style>

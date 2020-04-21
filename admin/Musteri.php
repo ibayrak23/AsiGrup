@@ -1,5 +1,15 @@
 <?php include ("navbar.php");
-include ("baglanti.php");
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "asideneme";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Veritabanına Bağlanılamadı: " . $conn->connect_error);
+}
 ?>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -19,7 +29,7 @@ include ("baglanti.php");
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 </head>
 <?php
-$sql = "SELECT borc_id,miktar FROM borclar";
+$sql = "SELECT adiSoyadi FROM banka";
 $result = $conn->query($sql);
 ?>
 <body>
@@ -34,6 +44,7 @@ $result = $conn->query($sql);
                     <form class="form-horizontal" method="post">
                         <fieldset>
                             <legend class="text-center header">Müşteriler</legend>
+
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
@@ -43,13 +54,13 @@ $result = $conn->query($sql);
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="tcNo" name="tcNo" type="text" maxlength="11" placeholder="Tc Numarası" class="form-control">
+                                    <input id="tcNo" name="tcNo" type="number" maxlength="11" placeholder="Tc Numarası" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-user bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="telNo" name="telNo" type="text" maxlength="11" placeholder="Telefon Numarası" class="form-control">
+                                    <input id="telNo" name="telNo" type="number" maxlength="11" placeholder="Telefon Numarası" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -61,38 +72,33 @@ $result = $conn->query($sql);
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <input id="taxNo" name="taxNo" type="text" maxlength="10" placeholder="Vergi Numarası" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
-                                <div class="col-md-8">
-                                    <input id="apartmentNo" name="apartmentNo" type="text" placeholder="Aldığı Daire" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
-                                <div class="col-md-8">
-                                    <input id="payment" name="payment" type="text" placeholder="Ödediği Peşinat" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
-                                <div class="col-md-8">
-                                    <input id="debt" name="debt" type="text" placeholder="Kalan Miktar" class="form-control">
+                                    <input id="taxNo" name="taxNo" type="number" maxlength="10" placeholder="Vergi Numarası" class="form-control">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
                                 <div class="col-md-8">
-                                    <select class="form-control">
+                                    <input id="payment" name="payment" type="number" placeholder="Ödediği Peşinat" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
+                                <div class="col-md-8">
+                                    <input id="debt" name="debt" type="number" placeholder="Kalan Miktar" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <span class="col-md-1 col-md-offset-2 text-center"><i class="fa fa-phone-square bigicon"></i></span>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="bankName"  name="bankName">
                                         <?php        if ($result->num_rows > 0) {
-                                        // output data of each row
-                                        while($row = $result->fetch_assoc()) {
-                                        ?>
-                                        <option value="<?php echo $row["borc_id"]; ?>"> <?php echo $row["miktar"]; ?></option>
-                                        <?php  }}?>
+                                            // output data of each row
+                                            while($row = $result->fetch_assoc()) {
+                                                ?>
+                                                <option value="<?php echo $row["adiSoyadi"]; ?>" > <?php echo $row["adiSoyadi"]; ?></option>
+                                            <?php  }}?>
                                     </select>
                                 </div>
                             </div>
@@ -116,9 +122,9 @@ $result = $conn->query($sql);
     $telNo= isset($_POST['telNo']) ? $_POST['telNo'] : '';
     $adress= isset( $_POST['adress']) ?  $_POST['adress'] : '';
     $taxNo= isset( $_POST['taxNo']) ?  $_POST['taxNo'] : '';
-    $apartmentNo= isset( $_POST['apartmentNo']) ?  $_POST['apartmentNo'] : '';
     $payment= isset( $_POST['payment']) ?  $_POST['payment'] : '';
     $debt= isset( $_POST['debt']) ?  $_POST['debt'] : '';
+    $bankName= isset( $_POST['bankName']) ?  $_POST['bankName'] : '';
 
     if (isset($_POST['button'])){
         if(empty($_POST['name'])){
@@ -131,15 +137,13 @@ $result = $conn->query($sql);
             echo "<script type='text/javascript'>alert('Adresi Yazınız...');</script>";
         }elseif(empty($_POST['taxNo'])){
             echo "<script type='text/javascript'>alert('Vergi No Yazınız...');</script>";
-        }elseif(empty($_POST['apartmentNo'])){
-            echo "<script type='text/javascript'>alert('Aldığı Daireyi Yazınız...');</script>";
         }elseif(empty($_POST['payment'])){
             echo "<script type='text/javascript'>alert('Ne kadar Ödediğini Yazınız...');</script>";
         }elseif(empty($_POST['debt'])){
             echo "<script type='text/javascript'>alert('Ne kadar Ödeyeceğini Yazınız...');</script>";
-        }else{
-            $sql = "INSERT INTO musteri (adSoyad,tcNo,gsm,adres,vergiNo,aldıgıDaire,odedigiPesinat,kalanMiktar)
-        VALUES ('$name','$tcNo','$telNo','$adress','$taxNo','$apartmentNo','$payment','$debt')";
+        }else{  echo $bankName.'---------';
+            $sql = "INSERT INTO musteri (adiSoyadi,tc,gsm,adres,vergiNo,odenenBorc,kalanBorc,banka)
+        VALUES ('$name','$tcNo','$telNo','$adress','$taxNo','$payment','$debt','$bankName')";
         }
         if (mysqli_query($conn, $sql)) {
             echo "<script type='text/javascript'>alert('Kayıt Başarılı...');</script>";
