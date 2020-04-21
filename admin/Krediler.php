@@ -105,12 +105,8 @@ $result = $conn->query($sql);
     $topFaiz= isset( $_POST['topFaiz']) ?  $_POST['topFaiz'] : '';
   //  $topPay= isset( $_POST['topPay']) ?  $_POST['topPay'] : '';
     $durum= isset( $_POST['durum']) ?  $_POST['durum'] : '';
-    //    $topPay = $credit + $topFaiz;
-    $credit= (int)$credit;
-    $topFaiz= (int)$topFaiz;
-    $rentCount= (int)$rentCount;
-    $temp=$credit+$topFaiz;
-    $taksitTutari = ($temp)/$rentCount;
+
+
     if (isset($_POST['button'])){
         if(empty($_POST['credit'])){
             echo "<script type='text/javascript'>alert('Kredi Miktarını Yazınız...');</script>";
@@ -123,9 +119,15 @@ $result = $conn->query($sql);
         }elseif(empty($_POST['topFaiz'])){
             echo "<script type='text/javascript'>alert('Toplam Ödenecek Faizi Yazınız...');</script>";
         }else{
+            $credit= (int)$credit;
+            $topFaiz= (int)$topFaiz;
+            $rentCount= (int)$rentCount;
+            $temp=$credit+$topFaiz;
+            $taksitTutari = $temp / $rentCount;
             $sql = "INSERT INTO kredi (krediMiktari,taksitSayisi,odemeGunu,bankaAdi,taksitTutari,toplamFaiz,toplamOdeme)
         VALUES ('$credit','$rentCount','$payDate','$bankName','$taksitTutari','$topFaiz','$temp')";
         }
+
         if (mysqli_query($conn, $sql)) {
             echo "<script type='text/javascript'>alert('Kayıt Başarılı...');</script>";
         } else {
