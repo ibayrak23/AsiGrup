@@ -15,12 +15,11 @@ include("baglanti.php"); ?>
     </script>
 </head>
 <?php
-$sql = "SELECT id, toppara, gelenpara,gidenpara,geltarih,gittarih FROM kasa";
+$sql = "SELECT cekSahibi, miktar, toplamOdeme,date,tur,lastDate FROM borc";
 $result = $conn->query($sql);
 if (isset($_GET['del']) && is_numeric($_GET['del']))
 {
-    $del = $_GET['del'];
-    $sql = "DELETE FROM kasa WHERE id=$del";
+
     if ($conn->query($sql) == TRUE) {
         echo "<script type='text/javascript'>alert('Kayıt Silindi...');</script>";
         header("Location: kasa.php");
@@ -41,12 +40,12 @@ else if(isset($_GET['upd']) && is_numeric($_GET['upd'])){
             <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
                 <thead>
                 <tr>
-                    <th>id</th>
-                    <th>Toplam Para</th>
-                    <th>Gelen Para</th>
-                    <th>Giden Para</th>
-                    <th>Gelen Para Tarihi</th>
-                    <th>Giden Para Tarihi</th>
+                    <th>Çek Sahibi</th>
+                    <th>Aylık Ödeme Miktarı</th>
+                    <th>Tarih</th>
+                    <th>Toplam Odeme</th>
+                    <th>Tür</th>
+                    <th>En Yakın Ödeme</th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -55,12 +54,12 @@ else if(isset($_GET['upd']) && is_numeric($_GET['upd'])){
 
                 <tfoot>
                 <tr>
-                    <th>id</th>
-                    <th>Toplam Para</th>
-                    <th>Gelen Para</th>
-                    <th>Giden Para</th>
-                    <th>Gelen Para Tarihi</th>
-                    <th>Giden Para Tarihi</th>
+                    <th>Çek Sahibi</th>
+                    <th>Aylık Ödeme Miktarı</th>
+                    <th>Tarih</th>
+                    <th>Toplam Odeme</th>
+                    <th>Tür</th>
+                    <th>En Yakın Ödeme</th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -72,12 +71,12 @@ else if(isset($_GET['upd']) && is_numeric($_GET['upd'])){
                     ?>
                     <tbody>
                     <tr role="row" class="odd">
-                        <td><?php echo $row["id"]. "<br>"; ?></td>
-                        <td><?php echo $row["toppara"]. "<br>"; ?></td>
-                        <td><?php echo $row["gelenpara"]. "<br>"; ?></td>
-                        <td><?php echo $row["gidenpara"]. "<br>"; ?></td>
-                        <td><?php echo $row["geltarih"]. "<br>"; ?></td>
-                        <td><?php echo $row["gittarih"]. "<br>"; ?></td>
+                        <td><?php echo $row["cekSahibi"]. "<br>"; ?></td>
+                        <td><?php echo $row["miktar"]. "<br>"; ?></td>
+                        <td><?php echo $row["toplamOdeme"]. "<br>"; ?></td>
+                        <td><?php echo $row["date"]. "<br>"; ?></td>
+                        <td><?php echo $row["tur"]. "<br>"; ?></td>
+                        <td><?php echo $row["lastDate"]. "<br>"; ?></td>
                         <td>
                             <a href="../musteri.php?id=<?= $row['id']; ?>" class='btn btn-info btn-group-sm update'> İncele </a>
                         </td>
