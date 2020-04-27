@@ -1,15 +1,5 @@
 <?php include ("navbar.php");
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "asideneme";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Veritabanına Bağlanılamadı: " . $conn->connect_error);
-}
+include "baglanti.php";
 ?>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">

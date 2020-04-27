@@ -3,11 +3,12 @@ $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "asideneme";
+
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
 if ($conn->connect_error) {
-    die("Veritabanına Bağlanılamadı: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
  ?>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -28,7 +29,7 @@ if ($conn->connect_error) {
     </script>
 </head>
 <?php
-$sql = "SELECT cekSahibi,miktar,date,tur,toplamOdeme FROM borc";
+$sql = "SELECT id,cekSahibi,miktar,date,tur,toplamOdeme FROM borc";
 $result = $conn->query($sql);
 $toplam=0;
 $aylık=0;
@@ -79,7 +80,7 @@ $aylık=0;
                         <td><?php echo $row['tur'].   "<br>"; ?></td>
                         <td><?php if ($tarih1>$tarih2) {echo $interval.' gün sonra';} else if ($tarih2=$tarih1){echo "Bugün Ödeme Günü";} else {echo $interval.' gün geçti';}?></td>
                         <td>
-                            <a href="../musteri.php?id=<?= $row['id']; ?>" class='btn btn-info btn-group-sm update'> Ödeme Yap </a>
+                            <a href="../admin/Odeme.php?id=<?= $row['id']; ?>" class='btn btn-info btn-group-sm update'> Ödeme Yap </a>
                         </td>
                     </tr>
                     </tbody>
